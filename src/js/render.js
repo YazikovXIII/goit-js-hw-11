@@ -39,14 +39,15 @@ export function createMarkup(array) {
 }
 
 export function openModal() {
-  const someGallery = new SimpleLightbox('.gallery a');
-  someGallery.on('show.simplelightbox', function () {
+  const galleryItems = document.querySelectorAll('.gallery a');
+  const lightbox = new SimpleLightbox(galleryItems);
+  lightbox.on('show.simplelightbox', function () {
     const { defaultOptions } = lightbox;
     defaultOptions.captionDelay = 250;
   });
 }
 
 export function refreshModal() {
-  const someGallery = new SimpleLightbox('.gallery a');
-  someGallery.refresh();
+
+  lightbox.refresh();
 }

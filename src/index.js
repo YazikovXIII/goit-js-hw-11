@@ -1,4 +1,5 @@
 import { Notify } from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
 import { fetchImages } from './js/fetch';
 import { createMarkup } from './js/render';
 import { openModal } from './js/render';
@@ -26,6 +27,7 @@ function onLoadMore() {
 
 function onSearchForm(evt) {
   evt.preventDefault();
+  currentPage = 1;
   queryParam = evt.currentTarget.elements.searchQuery.value;
   galleryEl.innerHTML = '';
   buttonOnLoad.classList.add('is-hidden');
@@ -34,31 +36,12 @@ function onSearchForm(evt) {
     return;
   }
   renderImagesBySubmit(queryParam);
+  lastMessage.textContent = '';
 }
 
-async function renderImagesOnLoadMore() {
-  try {
-    const response = await fetchImages(queryParam, currentPage);
-    const dataArray = response.data.hits;
-    if (currentPage * 40 > response.data.totalHits) {
-      buttonOnLoad.classList.add('is-hidden');
-      lastMessage.textContent = `Hooray! We found ${response.data.totalHits} images.`;
-    }
-    galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
-    scrollBy();
-    const newGalleryItems = galleryEl.querySelectorAll('.gallery a');
-    const lightbox = new SimpleLightbox(newGalleryItems);
-    newGalleryItems.forEach(item => {
-      item.addEventListener('click', e => {
-        e.preventDefault();
-        lightbox.open(item.href);
-      });
-    });
-    refreshModal();
-  } catch (error) {
-    console.log(error);
-  }
-}
+// ++++++++++++++++++++++++++++++++++++++++++++
+
+// without simpleLightbox
 
 async function renderImagesBySubmit() {
   try {
@@ -73,7 +56,6 @@ async function renderImagesBySubmit() {
     } else {
       lastMessage.textContent = `Hooray! We found ${response.data.totalHits} images.`;
     }
-    openModal();
     scrollBy();
   } catch (error) {
     Notify.failure(
@@ -82,3 +64,75 @@ async function renderImagesBySubmit() {
     galleryEl.innerHTML = '';
   }
 }
+
+async function renderImagesOnLoadMore() {
+  try {
+    const response = await fetchImages(queryParam, currentPage);
+    const dataArray = response.data.hits;
+    if (currentPage * 40 > response.data.totalHits) {
+      buttonOnLoad.classList.add('is-hidden');
+      lastMessage.textContent = `Hooray! We found ${response.data.totalHits} images.`;
+    }
+    galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
+
+    scrollBy();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// let lightbox;
+// let galleryItems;
+
+// async function renderImagesBySubmit() {
+//   try {
+//     const response = await fetchImages(queryParam);
+//     const dataArray = response.data.hits;
+//     galleryEl.innerHTML = createMarkup(dataArray);
+//     if (!dataArray.length) throw new Error('not found');
+//     if (dataArray.length)
+//       Notify.success(`Hooray! We found ${response.data.totalHits} images.`);
+//     if (dataArray.length >= 40) {
+//       buttonOnLoad.classList.remove('is-hidden');
+//     } else {
+//       lastMessage.textContent = `Hooray! We found ${response.data.totalHits} images.`;
+//     }
+
+//     galleryItems = document.querySelectorAll('.gallery a');
+//     lightbox = new SimpleLightbox(galleryItems);
+//     lightbox.on('show.simplelightbox', function () {
+//       const { defaultOptions } = lightbox;
+//       defaultOptions.captionDelay = 250;
+//     });
+
+//     scrollBy();
+//   } catch (error) {
+//     Notify.failure(
+//       'Sorry, there are no images matching your search query. Please try again.'
+//     );
+//     galleryEl.innerHTML = '';
+//   }
+// }
+
+// async function renderImagesOnLoadMore() {
+//   try {
+//     const response = await fetchImages(queryParam, currentPage);
+//     const dataArray = response.data.hits;
+//     if (currentPage * 40 > response.data.totalHits) {
+//       buttonOnLoad.classList.add('is-hidden');
+//       lastMessage.textContent = `Hooray! We found ${response.data.totalHits} images.`;
+//     }
+//     galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
+//     scrollBy();
+
+//     if (lightbox) {
+//       galleryItems = document.querySelectorAll('.gallery a');
+//       lightbox = new SimpleLightbox(galleryItems);
+//       lightbox.refresh();
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
