@@ -1,0 +1,39 @@
+.gallery {
+    display: flex;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.info {
+    display: flex;
+    flex-wrap: wrap;
+    font-family: monospace;
+    align-items: center;
+    justify-content: center;
+}
+
+.info .info-item:not(:first-child){
+    margin-left: 10px;
+}
+.gallery-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.load-more {
+margin: 40px;
+font-family: monospace;
+cursor: pointer;
+}
+.is-hidden{
+    display: none;
+}
+
+.last-message{
+    margin-bottom: 40px;
+    font-family: monospace;
+    font-size: 25px;
+}
